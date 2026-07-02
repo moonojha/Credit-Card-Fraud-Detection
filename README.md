@@ -70,9 +70,6 @@ Or, with Docker:
 bashdocker build -t fraud-api .
 docker run -p 8000:8000 fraud-api
 
-**API Endpoints**
-
-EndpointMethodDescription/healthGETHealth check/sample_transactionGETReturns a real transaction from the held-out test set/predictPOSTReturns fraud probability for a given transaction
 
 **Example request:**
 
