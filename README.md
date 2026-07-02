@@ -12,13 +12,17 @@ This project tackles a highly imbalanced binary classification problem (fraud vs
 
 Evaluated on a held-out test set (56,962 transactions, 98 fraud cases), using a decision threshold of 0.15 (tuned to prioritize recall).
 
-**Precision:** Non-fraud -> 1.000.    Fraud -> 0.06
-**Recall:** Non-fraud -> 0.98.        Fraud -> 0.92
-**F1-score:** Non-fraud -> 0.99.      Fraud -> 0.12
+**Precision:** Non-fraud -> 1.000     Fraud -> 0.06
+
+**Recall:** Non-fraud -> 0.98         Fraud -> 0.92
+
+**F1-score:** Non-fraud -> 0.99       Fraud -> 0.12
 
 
 **Overall accuracy:** 98% (not a meaningful metric on its own given the class imbalance — included for reference only)
+
 **Training time:** 4.84s 
+
 **Prediction time:** 0.32s
 
 
@@ -27,11 +31,17 @@ Evaluated on a held-out test set (56,962 transactions, 98 fraud cases), using a 
 
 
 **Class imbalance:** handled via scale_pos_weight (XGBoost) and class_weight='balanced' (Random Forest) rather than synthetic oversampling (e.g. SMOTE), to avoid introducing synthetic data risk. Combined with threshold tuning based on the precision-recall curve rather than the default 0.5 cutoff.
+
 **Threshold choice (0.15):** in fraud detection, a missed fraud case (false negative) is typically far costlier than a false alarm (false positive), which a human reviewer can quickly dismiss. The threshold was chosen to maximize recall while keeping precision non-trivial, rather than optimizing for accuracy or F1 alone.
+
 **Feature selection:** top 12 features selected by absolute correlation with the target, computed on the training set only to avoid data leakage.
+
 **Feature scope:** Amount and an engineered Hour (derived from Time) were evaluated during feature selection but did not rank in the final top 12 — the deployed model uses only the anonymized PCA-derived features (V1–V28).
+
 **Model comparison:** Random Forest, XGBoost, and LightGBM were all trained and compared; XGBoost was selected as the final model based on precision-recall performance.
+
 **Hyperparameter tuning:** XGBoost was tuned via Optuna.
+
 **Experiment tracking:** all training runs, hyperparameters, and metrics logged via MLflow.
 
 
@@ -87,8 +97,11 @@ json{
 
 
 **Precision-recall tradeoff:** the current threshold heavily favors recall. In a production setting, this threshold would be tuned in collaboration with whoever handles fraud review, based on their actual review capacity.
+
 **No drift monitoring:** a production system would need to track feature distribution drift over time; not implemented here.
+
 **Static threshold:** currently hardcoded (0.15); a production system might adjust it dynamically based on transaction context (e.g. amount, merchant category).
+
 **No live/public deployment:** currently runs locally or via Docker; a next step would be deploying to a cloud service (e.g. Render, Railway, Fly.io) for a persistent public demo.
 
 
