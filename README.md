@@ -53,21 +53,21 @@ The notebook downloads the dataset directly via the Kaggle API. Get an API token
 
 **2. Install dependencies**
 
-bashpip install -r requirements.txt
+pip install -r requirements.txt
 
 **3. Run the notebook (optional — a trained model is already included in models/)**
 
-bashjupyter notebook notebooks/Credit_Card_Fraud_Detection_MLOps.ipynb
+jupyter notebook notebooks/Credit_Card_Fraud_Detection_MLOps.ipynb
 
 **4. Run the API**
 
-bashuvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 Visit http://localhost:8000/docs for interactive API documentation.
 
 Or, with Docker:
 
-bashdocker build -t fraud-api .
+docker build -t fraud-api .
 docker run -p 8000:8000 fraud-api
 
 
