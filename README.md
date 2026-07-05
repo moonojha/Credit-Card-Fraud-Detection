@@ -4,7 +4,7 @@ An end-to-end machine learning pipeline for detecting fraudulent credit card tra
 
 ## Overview
 
-This project tackles a highly imbalanced binary classification problem (fraud vs. non-fraud, ~0.17% fraud class) using the Kaggle Credit Card Fraud dataset. Rather than stopping at a notebook, the project is built as a full pipeline: trained models are tracked with MLflow, tuned with Optuna, and served through a FastAPI application packaged in Docker.
+This project tackles a highly imbalanced binary classification problem (fraud vs. non-fraud, ~0.17% fraud class) using the Kaggle Credit Card Fraud dataset. The project is built as a full pipeline: trained models are tracked with MLflow, tuned with Optuna, and served through a FastAPI application packaged in Docker.
 
 **Chosen model:** XGBoost (compared against Random Forest and LightGBM)
 
@@ -30,7 +30,7 @@ Evaluated on a held-out test set (56,962 transactions, 98 fraud cases), using a 
 
 
 
-**Class imbalance:** handled via scale_pos_weight on XGBoost and class_weight='balanced' on Random Forest rather than synthetic oversampling (e.g. SMOTE), to avoid introducing synthetic data risk. Combined with threshold tuning based on the precision-recall curve rather than the default 0.5 cutoff.
+**Class imbalance:** handled via scale_pos_weight on XGBoost and class_weight='balanced' on Random Forest rather than synthetic oversampling (e.g. SMOTE), to avoid introducing synthetic data risk. Threshold tuning is based on the precision-recall curve rather than the default 0.5 cutoff.
 
 **Threshold choice (0.15):** in fraud detection, a missed fraud case (false negative) is typically far costlier than a false alarm (false positive), which a human reviewer can quickly dismiss. The threshold was chosen to maximize recall while keeping precision non-trivial.
 
@@ -57,7 +57,7 @@ pip install -r requirements.txt
 
 **3. Run the notebook (optional — a trained model is already included in models/)**
 
-jupyter notebook notebooks/Credit_Card_Fraud_Detection_MLOps.ipynb
+notebooks/Credit_Card_Fraud_Detection_MLOps.ipynb
 
 **4. Run the API**
 
@@ -92,7 +92,7 @@ POST /predict
 }
 
 
-**Note:** because the dataset's features are anonymized for privacy, the API doesn't accept human-interpretable input. The /sample_transaction endpoint returns a real transaction from the test set that can be passed directly to /predict for demonstration purposes.
+**Note:** The API doesn't accept human-interpretable input because the dataset's features are anonymized for privacy. The /sample_transaction endpoint returns a real transaction from the test set that can be passed directly to /predict for demonstration purposes.
 
 
 
