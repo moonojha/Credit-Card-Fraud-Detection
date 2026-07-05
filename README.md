@@ -110,4 +110,4 @@ POST /predict
 
 ## Dataset
 
-[Credit Card Fraud Detection — Kaggle](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud), provided by the Machine Learning Group at ULB. Not included in this repo due to size and redistribution terms; download via the Kaggle API as described above.
+[Credit Card Fraud Detection — Kaggle](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud), provided by the Machine Learning Group at ULB. 
