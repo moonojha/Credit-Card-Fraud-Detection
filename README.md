@@ -4,7 +4,7 @@ An end-to-end machine learning pipeline for detecting fraudulent credit card tra
 
 ## Overview
 
-This project tackles a highly imbalanced binary classification problem (fraud vs. non-fraud, ~0.17% positive class) using the Kaggle Credit Card Fraud dataset. Rather than stopping at a notebook, the project is built as a full pipeline: trained models are tracked with MLflow, tuned with Optuna, and served through a FastAPI application packaged in Docker.
+This project tackles a highly imbalanced binary classification problem (fraud vs. non-fraud, ~0.17% fraud class) using the Kaggle Credit Card Fraud dataset. Rather than stopping at a notebook, the project is built as a full pipeline: trained models are tracked with MLflow, tuned with Optuna, and served through a FastAPI application packaged in Docker.
 
 **Chosen model:** XGBoost (compared against Random Forest and LightGBM)
 
@@ -26,23 +26,23 @@ Evaluated on a held-out test set (56,962 transactions, 98 fraud cases), using a 
 **Prediction time:** 0.32s
 
 
-**Interpretation:** the model catches 92% of actual fraud cases, at the cost of a high false-positive rate (roughly 1 in 17 flagged transactions is truly fraudulent). This is a deliberate tradeoff — see below.
+**Interpretation:** the model catches 92% of actual fraud cases, at the cost of a high false-positive rate (roughly 1 in 17 flagged transactions is truly fraudulent). This is a deliberate tradeoff.
 
 
 
-**Class imbalance:** handled via scale_pos_weight (XGBoost) and class_weight='balanced' (Random Forest) rather than synthetic oversampling (e.g. SMOTE), to avoid introducing synthetic data risk. Combined with threshold tuning based on the precision-recall curve rather than the default 0.5 cutoff.
+**Class imbalance:** handled via scale_pos_weight on XGBoost and class_weight='balanced' on Random Forest rather than synthetic oversampling (e.g. SMOTE), to avoid introducing synthetic data risk. Combined with threshold tuning based on the precision-recall curve rather than the default 0.5 cutoff.
 
-**Threshold choice (0.15):** in fraud detection, a missed fraud case (false negative) is typically far costlier than a false alarm (false positive), which a human reviewer can quickly dismiss. The threshold was chosen to maximize recall while keeping precision non-trivial, rather than optimizing for accuracy or F1 alone.
+**Threshold choice (0.15):** in fraud detection, a missed fraud case (false negative) is typically far costlier than a false alarm (false positive), which a human reviewer can quickly dismiss. The threshold was chosen to maximize recall while keeping precision non-trivial.
 
 **Feature selection:** top 12 features selected by absolute correlation with the target, computed on the training set only to avoid data leakage.
 
-**Feature scope:** Amount and an engineered Hour (derived from Time) were evaluated during feature selection but did not rank in the final top 12 — the deployed model uses only the anonymized PCA-derived features (V1–V28).
+**Feature scope:** Amount and an engineered Hour (derived from Time) were evaluated during feature selection but did not rank in the final top 12. The deployed model uses only the anonymized PCA-derived features.
 
-**Model comparison:** Random Forest, XGBoost, and LightGBM were all trained and compared; XGBoost was selected as the final model based on precision-recall performance.
+**Model comparison:** Random Forest, XGBoost, and LightGBM were all trained and compared, and XGBoost was selected as the final model based on precision-recall performance.
 
-**Hyperparameter tuning:** XGBoost was tuned via Optuna.
+**Hyperparameter tuning:** XGBoost was tuned with Optuna.
 
-**Experiment tracking:** all training runs, hyperparameters, and metrics logged via MLflow.
+**Experiment tracking:** all training runs, hyperparameters, and metrics logged with MLflow.
 
 
 # Running Locally
@@ -73,7 +73,7 @@ docker run -p 8000:8000 fraud-api
 
 **Example request:**
 
-jsonPOST /predict
+POST /predict
 
 {
 
@@ -83,7 +83,7 @@ jsonPOST /predict
 
 **Example response:**
 
-json{
+{
 
   "prob_fraud": 0.87,
 
@@ -92,7 +92,7 @@ json{
 }
 
 
-**Note:** because the dataset's features are PCA-anonymized for privacy (a realistic constraint in real-world fraud systems), the API doesn't accept human-interpretable input. The /sample_transaction endpoint returns a real transaction from the test set that can be passed directly to /predict for demonstration purposes.
+**Note:** because the dataset's features are anonymized for privacy, the API doesn't accept human-interpretable input. The /sample_transaction endpoint returns a real transaction from the test set that can be passed directly to /predict for demonstration purposes.
 
 
 
@@ -103,9 +103,9 @@ json{
 
 **No drift monitoring:** a production system would need to track feature distribution drift over time; not implemented here.
 
-**Static threshold:** currently hardcoded (0.15); a production system might adjust it dynamically based on transaction context (e.g. amount, merchant category).
+**Static threshold:** currently hardcoded (0.15), however, a production system might adjust it dynamically based on transaction context.
 
-**No live/public deployment:** currently runs locally or via Docker; a next step would be deploying to a cloud service (e.g. Render, Railway, Fly.io) for a persistent public demo.
+**No live/public deployment:** currently runs locally or via Docker. A next step would be deploying to a cloud service for a competent public demo.
 
 
 ## Dataset
